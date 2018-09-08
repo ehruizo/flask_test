@@ -74,7 +74,6 @@ class UserDataPost(Resource):
 
 
 # endpoints
-
 SITE_PREFIX = app.config['SITE_PREFIX']
 api.add_resource(Welcome, '{}/'.format(SITE_PREFIX))
 api.add_resource(Test1, '{}/test1'.format(SITE_PREFIX))
