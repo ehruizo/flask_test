@@ -27,7 +27,7 @@ test_fields = {
 
 class Welcome(Resource):
     def get(self):
-        return jsonify(welcome='Esto es una API de prueba')
+        return jsonify(message='Hola, esto es una API de prueba')
 
 
 class Test1(Resource):
