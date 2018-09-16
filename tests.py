@@ -1,23 +1,20 @@
 from flask import request, jsonify
 from flask_restful import Resource, fields, marshal_with
 import os
-import pandas as pd
 import numpy as np
 from sklearn.externals import joblib
 
 
 path = os.path.dirname(os.path.realpath(__file__))
 analytics_path = os.path.join(path, 'analytics')
-model_file = os.path.join(analytics_path, 'sentiment_model.pkl')
-transformer_file = os.path.join(analytics_path, 'sentiment_transformer.pkl')
+sentiment_model_file = os.path.join(analytics_path, 'sentiment_model.pkl')
 iris_model_file = os.path.join(analytics_path, 'iris_model.pkl')
 
 # si estas sentencias se ponen acá, los objetos se cargan en la memoria del servidor al momento de iniciar la API,
 # esto hace que las respuestas a las peticiones sean más rápidas
 # si se ponen dentro de la función o clase, los objetos se leen del disco cada vez que se invoca el endpoint,
 # lo que es más lento, pero reduce el uso de memoria del servidor
-model = joblib.load(model_file)
-transformer = joblib.load(transformer_file)
+sentiment_model = joblib.load(sentiment_model_file)
 iris_model = joblib.load(iris_model_file)
 
 test_fields = {
@@ -60,21 +57,15 @@ class Mathematics(Resource):
 
 class Sentiment(Resource):
 
-    def text_transformer(self, text, vectorizer):
-        text = pd.Series([text], name='text')
-        features_test = vectorizer.transform(text)
-        return features_test
-
-    def scorer(self, text, classifier, vectorizer):
-        test_data = self.text_transformer(text=text, vectorizer=vectorizer)
-        pred = classifier.predict(test_data)[0]
-        ppred = np.max(classifier.predict_proba(test_data)[0])
+    def scorer(self, text, classifier):
+        pred = classifier.predict(text)[0]
+        ppred = np.max(classifier.predict_proba(text)[0])
         return jsonify(sentiment=int(pred), probability=float(ppred))
 
     def post(self):
         jdata = request.get_json()
-        text = jdata.get('text')
-        result = self.scorer(text=text, classifier=model, vectorizer=transformer)
+        text = [jdata.get('text')]
+        result = self.scorer(text=text, classifier=sentiment_model)
         return result
 
 
