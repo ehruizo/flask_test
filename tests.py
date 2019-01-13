@@ -83,8 +83,13 @@ class Iris(Resource):
         except:
             return jsonify(predicted=None, probability=None, message='There was an error')
 
+    def get(self):
+        reqdata = request.args
+        result = self.scorer(data=reqdata, classifier=iris_model)
+        return result
+
     def post(self):
-        jdata = request.get_json()
-        result = self.scorer(data=jdata, classifier=iris_model)
+        reqdata = request.get_json()
+        result = self.scorer(data=reqdata, classifier=iris_model)
         return result
 
