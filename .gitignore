@@ -1,0 +1,6 @@
+tests.txt
+*.pyc
+*.pyo
+*.csv
+*.pkl
+.ipynb_checkpoints/
