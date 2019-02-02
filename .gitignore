@@ -5,3 +5,4 @@ tests.txt
 *.pkl
 .ipynb_checkpoints/
 .idea/
+doc/
