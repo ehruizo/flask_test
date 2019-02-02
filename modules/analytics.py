@@ -1,12 +1,11 @@
 from flask import request, jsonify
-from flask_restful import Resource, fields, marshal_with
-import os
-import numpy as np
+from flask_restful import Resource
 from sklearn.externals import joblib
+import numpy as np
+import os
 
 
-path = os.path.dirname(os.path.realpath(__file__))
-analytics_path = os.path.join(path, 'analytics')
+analytics_path = os.path.join('.', 'analytics')
 sentiment_model_file = os.path.join(analytics_path, 'sentiment_model.pkl')
 iris_model_file = os.path.join(analytics_path, 'iris_model.pkl')
 
@@ -16,43 +15,6 @@ iris_model_file = os.path.join(analytics_path, 'iris_model.pkl')
 # lo que es más lento, pero reduce el uso de memoria del servidor
 sentiment_model = joblib.load(sentiment_model_file)
 iris_model = joblib.load(iris_model_file)
-
-test_fields = {
-    'test_url': fields.Url('test1', absolute=True)  # url del recurso test1
-}
-
-
-class Welcome(Resource):
-    def get(self):
-        return jsonify(message='Hola, esto es una API de prueba')
-
-
-class Test1(Resource):
-    def get(self):
-        req = str(request.args)          # parámetros GET
-        return jsonify(datos=req)
-
-    def post(self):
-        reqpars = str(request.args)      # parámetros GET
-        reqjson = request.get_json()     # datos de una petición POST application/json
-        reqform = str(request.form)      # datos de una petición tipo formulario application/x-www-form-urlencoded
-        reqval = str(request.values)     # combina datos de formulario y parámetros GET
-        reqstr = str(request.data)       # original en string (si mimetype no es reconocido)
-        return jsonify(get=reqpars, json=reqjson, formulario=reqform, values=reqval, str=reqstr)
-
-
-class Test2(Resource):
-    @marshal_with(test_fields, envelope='data')
-    def get(self):
-        return {}                        # retorna test_fields
-
-
-class Mathematics(Resource):
-    def get(self):
-        pars = request.args
-        a = int(pars.get('a', 0))
-        b = int(pars.get('b', 0))
-        return jsonify(value=a+b)
 
 
 class Sentiment(Resource):
