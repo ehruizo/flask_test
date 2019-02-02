@@ -4,4 +4,3 @@ tests.txt
 *.csv
 *.pkl
 .ipynb_checkpoints/
-.idea/
